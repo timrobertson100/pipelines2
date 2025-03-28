@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gbif.pipelines.interpretation.taxonomy;
+package org.gbif.pipelines.clients.taxonomy;
 
 import java.util.List;
 

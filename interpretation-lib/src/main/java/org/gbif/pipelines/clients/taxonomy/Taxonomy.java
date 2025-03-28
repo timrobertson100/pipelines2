@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gbif.pipelines.interpretation.taxonomy;
+package org.gbif.pipelines.clients.taxonomy;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +35,9 @@ public class Taxonomy {
             .client(
                 new OkHttpClient.Builder()
                     .connectionPool(new ConnectionPool(poolSize, 1L, TimeUnit.MINUTES))
+                    .connectTimeout(1, TimeUnit.MINUTES)
+                    .readTimeout(1, TimeUnit.MINUTES)
+                    .writeTimeout(1, TimeUnit.MINUTES)
                     .build())
             .addConverterFactory(GsonConverterFactory.create())
             .build()

@@ -13,7 +13,7 @@
  */
 package org.gbif.pipelines.interpretation.spark.udf;
 
-import org.gbif.pipelines.interpretation.dictionary.Dictionary;
+import org.gbif.pipelines.clients.dictionary.Dictionary;
 import org.gbif.pipelines.interpretation.spark.Config;
 
 import java.util.List;

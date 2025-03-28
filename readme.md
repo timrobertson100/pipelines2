@@ -22,8 +22,8 @@ Download and start a Spark cluster and set a few things (this may vary with envi
 wget https://dlcdn.apache.org/spark/spark-3.5.4/spark-3.5.4-bin-hadoop3.tgz        
 tar -xvf spark-3.5.4-bin-hadoop3.tgz
 cd spark-3.5.4-bin-hadoop3
-export SPARK_LOCAL_IP="127.0.0.1"
 export JAVA_HOME="/usr/libexec/java_home -v 17"
+export SPARK_LOCAL_IP="127.0.0.1"
 export SPARK_DAEMON_MEMORY="4G"
 ./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.4,org.apache.spark:spark-avro_2.12:3.5.4
 ```
@@ -41,3 +41,9 @@ Afterwards can run the `Interpretation` class in the IDEA using:
 3. Changing the absolute location of the Jar file in the code
 
 Look in `/tmp` for the results.
+
+
+
+```
+cat $FILE | kubectl exec -i -n uat spark-shell-gateway-fd744fcd4-z9qm4 "--" sh -c "cat > /tmp/${FILE}"
+```

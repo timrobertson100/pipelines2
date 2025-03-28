@@ -14,8 +14,8 @@
 package org.gbif.pipelines.interpretation.spark.udf;
 
 import org.gbif.pipelines.interpretation.spark.Config;
-import org.gbif.pipelines.interpretation.taxonomy.MatchResponse;
-import org.gbif.pipelines.interpretation.taxonomy.Taxonomy;
+import org.gbif.pipelines.clients.taxonomy.MatchResponse;
+import org.gbif.pipelines.clients.taxonomy.Taxonomy;
 
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
