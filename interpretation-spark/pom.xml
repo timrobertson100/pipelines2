@@ -50,6 +50,17 @@
                         </goals>
                         <configuration>
                             <finalName>${project.artifactId}-${project.version}-${spark.version}</finalName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <relocations>
                                 <!-- Retrofit version clashes with Spark -->
                                 <relocation>

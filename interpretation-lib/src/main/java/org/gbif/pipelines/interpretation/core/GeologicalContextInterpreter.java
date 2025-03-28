@@ -1,19 +1,28 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gbif.pipelines.interpretation.core;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.gbif.api.vocabulary.OccurrenceIssue;
 import org.gbif.dwc.terms.DwcTerm;
-import org.gbif.pipelines.parsers.vocabulary.VocabularyService;
-import org.gbif.pipelines.utils.ModelUtils;
-import org.gbif.pipelines.utils.VocabularyConceptFactory;
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
 import org.gbif.pipelines.models.GeologicalContext;
 import org.gbif.pipelines.models.VocabularyConcept;
+import org.gbif.pipelines.parsers.vocabulary.VocabularyService;
+import org.gbif.pipelines.utils.ModelUtils;
+import org.gbif.pipelines.utils.VocabularyConceptFactory;
 import org.gbif.vocabulary.lookup.LookupConcept;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +30,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.Nullable;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import static org.gbif.dwc.terms.DwcTerm.earliestEraOrLowestErathem;
 import static org.gbif.dwc.terms.DwcTerm.latestEraOrHighestErathem;

@@ -1,12 +1,20 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gbif.pipelines.interpretation.core;
 
-import com.google.common.base.Strings;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.gbif.api.vocabulary.BasisOfRecord;
 import org.gbif.api.vocabulary.Extension;
-import org.gbif.api.vocabulary.OccurrenceStatus;
 import org.gbif.common.parsers.NumberParser;
 import org.gbif.common.parsers.core.Parsable;
 import org.gbif.common.parsers.core.ParseResult;
@@ -17,15 +25,19 @@ import org.gbif.pipelines.models.ExtendedRecord;
 import org.gbif.pipelines.parsers.identifiers.AgentIdentifierParser;
 import org.gbif.pipelines.parsers.vocabulary.SimpleTypeParser;
 import org.gbif.pipelines.parsers.vocabulary.VocabularyParser;
-import org.gbif.pipelines.utils.ModelUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import com.google.common.base.Strings;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.gbif.api.vocabulary.Extension.*;
 import static org.gbif.api.vocabulary.OccurrenceIssue.*;
@@ -149,97 +161,6 @@ public class BasicInterpreter {
         .map(AgentIdentifierParser::parse)
         .map(ArrayList::new)
         .ifPresent(br::setRecordedByIds);
-  }
-
-  /** {@link DwcTerm#occurrenceStatus} interpretation. */
-  public static BiConsumer<ExtendedRecord, BasicRecord> interpretOccurrenceStatus(
-      KeyValueStore<String, OccurrenceStatus> occStatusKvStore) {
-    return (er, br) -> {
-      if (occStatusKvStore == null) {
-        return;
-      }
-
-      String rawCount = ModelUtils.extractNullAwareValue(er, DwcTerm.individualCount);
-      Integer parsedCount = SimpleTypeParser.parsePositiveIntOpt(rawCount).orElse(null);
-
-      String rawOccStatus = ModelUtils.extractNullAwareValue(er, DwcTerm.occurrenceStatus);
-      OccurrenceStatus parsedOccStatus =
-          rawOccStatus != null ? occStatusKvStore.get(rawOccStatus) : null;
-
-      boolean isCountNull = rawCount == null;
-      boolean isCountRubbish = rawCount != null && parsedCount == null;
-      boolean isCountZero = parsedCount != null && parsedCount == 0;
-      boolean isCountGreaterZero = parsedCount != null && parsedCount > 0;
-
-      boolean isOccNull = rawOccStatus == null;
-      boolean isOccPresent = parsedOccStatus == OccurrenceStatus.PRESENT;
-      boolean isOccAbsent = parsedOccStatus == OccurrenceStatus.ABSENT;
-      boolean isOccRubbish = parsedOccStatus == null;
-
-      // https://github.com/gbif/pipelines/issues/392
-      boolean isSpecimen =
-          Optional.ofNullable(br.getBasisOfRecord())
-              .map(BasisOfRecord::valueOf)
-              .map(
-                  x ->
-                      x == BasisOfRecord.PRESERVED_SPECIMEN
-                          || x == BasisOfRecord.FOSSIL_SPECIMEN
-                          || x == BasisOfRecord.LIVING_SPECIMEN)
-              .orElse(false);
-
-      // rawCount === null
-      if (isCountNull) {
-        if (isOccNull || isOccPresent) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-        } else if (isOccAbsent) {
-          br.setOccurrenceStatus(OccurrenceStatus.ABSENT.name());
-        } else if (isOccRubbish) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-          addIssue(br, OCCURRENCE_STATUS_UNPARSABLE);
-        }
-      } else if (isCountRubbish) {
-        if (isOccNull || isOccPresent) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-        } else if (isOccAbsent) {
-          br.setOccurrenceStatus(OccurrenceStatus.ABSENT.name());
-        } else if (isOccRubbish) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-          addIssue(br, OCCURRENCE_STATUS_UNPARSABLE);
-        }
-        addIssue(br, INDIVIDUAL_COUNT_INVALID);
-      } else if (isCountZero) {
-        if (isOccNull && isSpecimen) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-          addIssue(br, OCCURRENCE_STATUS_INFERRED_FROM_BASIS_OF_RECORD);
-        } else if (isOccNull) {
-          br.setOccurrenceStatus(OccurrenceStatus.ABSENT.name());
-          addIssue(br, OCCURRENCE_STATUS_INFERRED_FROM_INDIVIDUAL_COUNT);
-        } else if (isOccPresent) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-          addIssue(br, INDIVIDUAL_COUNT_CONFLICTS_WITH_OCCURRENCE_STATUS);
-        } else if (isOccAbsent) {
-          br.setOccurrenceStatus(OccurrenceStatus.ABSENT.name());
-        } else if (isOccRubbish) {
-          br.setOccurrenceStatus(OccurrenceStatus.ABSENT.name());
-          addIssue(br, OCCURRENCE_STATUS_UNPARSABLE);
-          addIssue(br, OCCURRENCE_STATUS_INFERRED_FROM_INDIVIDUAL_COUNT);
-        }
-      } else if (isCountGreaterZero) {
-        if (isOccNull) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-          addIssue(br, OCCURRENCE_STATUS_INFERRED_FROM_INDIVIDUAL_COUNT);
-        } else if (isOccPresent) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-        } else if (isOccAbsent) {
-          br.setOccurrenceStatus(OccurrenceStatus.ABSENT.name());
-          addIssue(br, INDIVIDUAL_COUNT_CONFLICTS_WITH_OCCURRENCE_STATUS);
-        } else if (isOccRubbish) {
-          br.setOccurrenceStatus(OccurrenceStatus.PRESENT.name());
-          addIssue(br, OCCURRENCE_STATUS_UNPARSABLE);
-          addIssue(br, OCCURRENCE_STATUS_INFERRED_FROM_INDIVIDUAL_COUNT);
-        }
-      }
-    };
   }
 
   /** {@link DwcTerm#otherCatalogNumbers} interpretation. */

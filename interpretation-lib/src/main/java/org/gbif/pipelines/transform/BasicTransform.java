@@ -1,8 +1,18 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gbif.pipelines.transform;
 
-import lombok.Builder;
-import lombok.SneakyThrows;
-import org.gbif.api.vocabulary.OccurrenceStatus;
 import org.gbif.pipelines.interpretation.Interpretation;
 import org.gbif.pipelines.interpretation.core.*;
 import org.gbif.pipelines.models.BasicRecord;
@@ -12,55 +22,13 @@ import org.gbif.pipelines.parsers.vocabulary.VocabularyService;
 import java.time.Instant;
 import java.util.Optional;
 
-import static org.gbif.api.model.pipelines.InterpretationType.RecordType.BASIC;
+import lombok.Builder;
 
-/**
- *
- */
+/** */
+@Builder
 public class BasicTransform {
-
-  private final SerializableSupplier<KeyValueStore<String, OccurrenceStatus>>
-      occStatusKvStoreSupplier;
-  private final SerializableSupplier<VocabularyService> vocabularyServiceSupplier;
-
-  @Builder.Default private boolean useDynamicPropertiesInterpretation = false;
-
-  private KeyValueStore<String, OccurrenceStatus> occStatusKvStore;
+  private boolean useDynamicPropertiesInterpretation;
   private VocabularyService vocabularyService;
-
-  @Builder(buildMethodName = "create")
-  private BasicTransform(
-      boolean useDynamicPropertiesInterpretation,
-      SerializableSupplier<VocabularyService> vocabularyServiceSupplier,
-      SerializableSupplier<KeyValueStore<String, OccurrenceStatus>> occStatusKvStoreSupplier) {
-    super(BasicRecord.class, BASIC, BasicTransform.class.getName(), BASIC_RECORDS_COUNT);
-    this.useDynamicPropertiesInterpretation = useDynamicPropertiesInterpretation;
-    this.occStatusKvStoreSupplier = occStatusKvStoreSupplier;
-    this.vocabularyServiceSupplier = vocabularyServiceSupplier;
-  }
-
-  /** Maps {@link BasicRecord} to key value, where key is {@link BasicRecord#getId} */
-  public MapElements<BasicRecord, KV<String, BasicRecord>> toKv() {
-    return MapElements.into(new TypeDescriptor<KV<String, BasicRecord>>() {})
-        .via((BasicRecord br) -> KV.of(br.getId(), br));
-  }
-
-  public BasicTransform counterFn(SerializableConsumer<String> counterFn) {
-    setCounterFn(counterFn);
-    return this;
-  }
-
-  /** Beam @Setup initializes resources */
-  @Setup
-  public void setup() {
-    if (occStatusKvStore == null && occStatusKvStoreSupplier != null) {
-      occStatusKvStore = occStatusKvStoreSupplier.get();
-    }
-    if (vocabularyService == null && vocabularyServiceSupplier != null) {
-      vocabularyService = vocabularyServiceSupplier.get();
-    }
-  }
-
 
   public Optional<BasicRecord> convert(ExtendedRecord source) {
 
@@ -86,7 +54,7 @@ public class BasicTransform {
             .via((e, r) -> CoreInterpreter.interpretLicense(e, r::setLicense))
             .via(BasicInterpreter::interpretIdentifiedByIds)
             .via(BasicInterpreter::interpretRecordedByIds)
-            .via(BasicInterpreter.interpretOccurrenceStatus(occStatusKvStore))
+            .via(VocabularyInterpreter.interpretOccurrenceStatus(vocabularyService))
             .via(VocabularyInterpreter.interpretEstablishmentMeans(vocabularyService))
             .via(VocabularyInterpreter.interpretLifeStage(vocabularyService))
             .via(VocabularyInterpreter.interpretPathway(vocabularyService))

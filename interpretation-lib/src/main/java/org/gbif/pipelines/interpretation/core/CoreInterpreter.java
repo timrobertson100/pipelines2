@@ -1,9 +1,18 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gbif.pipelines.interpretation.core;
 
-import com.google.common.base.Strings;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.gbif.api.vocabulary.License;
 import org.gbif.common.parsers.LicenseParser;
 import org.gbif.common.parsers.NumberParser;
@@ -17,6 +26,12 @@ import java.net.URI;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import com.google.common.base.Strings;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.gbif.api.vocabulary.OccurrenceIssue.REFERENCES_URI_INVALID;
 import static org.gbif.pipelines.utils.ModelUtils.*;
@@ -115,7 +130,8 @@ public class CoreInterpreter {
         }
 
         Parent.Builder parentBuilder = Parent.newBuilder().setId(parentEventID);
-        Optional<VocabularyConcept> vc = VocabularyInterpreter.interpretVocabulary(
+        Optional<VocabularyConcept> vc =
+            VocabularyInterpreter.interpretVocabulary(
                 DwcTerm.eventType, parentValues.get(DwcTerm.eventType.name()), vocabularyService);
         if (vc.isPresent() && vc.get().getConcept() != null) {
           parentBuilder.setEventType(vc.get().getConcept());

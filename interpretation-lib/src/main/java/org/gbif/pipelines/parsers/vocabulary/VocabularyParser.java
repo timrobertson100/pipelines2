@@ -1,7 +1,18 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gbif.pipelines.parsers.vocabulary;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import org.gbif.api.vocabulary.BasisOfRecord;
 import org.gbif.api.vocabulary.Continent;
 import org.gbif.api.vocabulary.Country;
@@ -18,6 +29,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 import static org.gbif.pipelines.utils.ModelUtils.*;
 
@@ -36,37 +50,27 @@ public class VocabularyParser<T extends Enum<T>> {
   // Term ot be parsed
   private final DwcTerm term;
 
-  /**
-   * @return a basis of record parser.
-   */
+  /** @return a basis of record parser. */
   public static VocabularyParser<BasisOfRecord> basisOfRecordParser() {
     return new VocabularyParser<>(BOR_PARSER, DwcTerm.basisOfRecord);
   }
 
-  /**
-   * @return a sex parser.
-   */
+  /** @return a sex parser. */
   public static VocabularyParser<Sex> sexParser() {
     return new VocabularyParser<>(SEX_PARSER, DwcTerm.sex);
   }
 
-  /**
-   * @return a country parser.
-   */
+  /** @return a country parser. */
   public static VocabularyParser<Country> countryParser() {
     return new VocabularyParser<>(COUNTRY_PARSER, DwcTerm.country);
   }
 
-  /**
-   * @return a country parser.
-   */
+  /** @return a country parser. */
   public static VocabularyParser<Country> countryCodeParser() {
     return new VocabularyParser<>(COUNTRY_PARSER, DwcTerm.countryCode);
   }
 
-  /**
-   * @return a continent parser.
-   */
+  /** @return a continent parser. */
   public static VocabularyParser<Continent> continentParser() {
     return new VocabularyParser<>(CONTINENT_PARSER, DwcTerm.continent);
   }

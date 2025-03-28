@@ -13,17 +13,19 @@
  */
 package org.gbif.pipelines.interpretation.spark;
 
-import org.apache.spark.api.java.function.MapFunction;
+import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
-import org.gbif.pipelines.interpretation.spark.udf.DictionaryUDF;
-import org.gbif.pipelines.interpretation.spark.udf.TaxonomyUDF;
+import org.gbif.pipelines.parsers.vocabulary.VocabularyService;
+import org.gbif.pipelines.transform.BasicTransform;
+import org.gbif.vocabulary.lookup.InMemoryVocabularyLookup;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.spark.api.java.function.MapPartitionsFunction;
 import org.apache.spark.sql.*;
-
-import static org.gbif.pipelines.interpretation.spark.InterpretationSQL.*;
 
 public class Interpretation implements Serializable {
   private static final Config CONF = new Config(); // TODO: a proper conf design
@@ -32,55 +34,68 @@ public class Interpretation implements Serializable {
     String input = "/Users/tsj442/dev/data/svampeatlas.verbatim.avro";
     String output = "/tmp/svampeatlas-interpreted";
 
-    // String input = "hdfs:///data/ingest/50c9509d-22c7-4a22-a47d-8c48425ef4a7/229/verbatim.avro";
-    // String input = "hdfs:///data/ingest/84d26682-f762-11e1-a439-00145eb45e9a/243/verbatim.avro";
-
     SparkSession spark = SparkSession.builder().remote("sc://localhost").getOrCreate();
-    // SparkSession spark = SparkSession.builder().getOrCreate();
 
     spark.addArtifact(
         "./interpretation-spark/target/interpretation-spark-2.0.0-SNAPSHOT-3.5.4.jar");
 
     Dataset<ExtendedRecord> records =
         spark.read().format("avro").load(input).as(Encoders.bean(ExtendedRecord.class));
-    // records.createOrReplaceTempView("source");
 
-    /*
-    MapFunction<ExtendedRecord, BasicRecord> f =
-        er ->
-            new BasicRecord(
-                er.getId(), er.getCoreTerms().get("http://rs.tdwg.org/dwc/terms/scientificName"));
-*/
+    Dataset<BasicRecord> basic =
+        records.mapPartitions(
+            (MapPartitionsFunction<ExtendedRecord, BasicRecord>)
+                er -> {
+                  BasicTransform bt =
+                      BasicTransform.builder()
+                          .useDynamicPropertiesInterpretation(true)
+                          .vocabularyService(newVocabularyService())
+                          .build();
 
-    //Dataset<BasicRecord> basic = records.map(f, Encoders.bean(BasicRecord.class));
+                  List<BasicRecord> out = new LinkedList<>();
+                  er.forEachRemaining(r -> out.add(bt.convert(r).get()));
+                  return out.iterator();
+                },
+            Encoders.bean(BasicRecord.class));
 
-    //basic.write().mode("overwrite").csv(output);
-
-    // SparkSession spark = SparkSession.builder().getOrCreate();
-
-    // read the verbatim avro input
-    spark.read().format("avro").load(input).createOrReplaceTempView("verbatim");
-
-    // create a view on the key value verbatim data to simplify SQL and improve performance
-    spark.sql(SOURCE_VIEW);
-
-    // generate dictionaries for all controlled fields, avoid cache use
-    DictionaryUDF.register(spark, "dictionaryLookup", CONF);
-    for (String dictionary : DICTIONARIES) {
-      spark.sql(dictionary);
-    }
-
-    // generate a table for the taxonomy, avoid cache use
-    TaxonomyUDF.register(spark, "nameMatch", CONF);
-    spark.sql(TAXONOMY);
-
-    // parse fields using functions and dictionary lookups
-    spark.sql(PARSE_SOURCE);
-
-    // TODO expand with fields that are not interpreted
-
-    spark.sql("SELECT * FROM parsed").write().mode("overwrite").csv(output);
+    basic.write().mode("overwrite").parquet(output);
 
     spark.close();
+  }
+
+  private static VocabularyService newVocabularyService() {
+    // TODO: prefixes from
+    // https://github.com/gbif/tech-docs/blob/main/en/data-processing/modules/ROOT/pages/vocabularies-interpretation.adoc
+    // TODO: Some likely missing!
+    return VocabularyService.builder()
+        .vocabularyLookup(
+            DwcTerm.lifeStage.qualifiedName(),
+            InMemoryVocabularyLookup.newBuilder()
+                .from("http://api.gbif.org/v1/", "LifeStage")
+                .build())
+        .vocabularyLookup(
+            DwcTerm.degreeOfEstablishment.qualifiedName(),
+            InMemoryVocabularyLookup.newBuilder()
+                .from("http://api.gbif.org/v1/", "DegreeOfEstablishment")
+                .build())
+        .vocabularyLookup(
+            DwcTerm.establishmentMeans.qualifiedName(),
+            InMemoryVocabularyLookup.newBuilder()
+                .from("http://api.gbif.org/v1/", "EstablishmentMeans")
+                .build())
+        .vocabularyLookup(
+            DwcTerm.pathway.qualifiedName(),
+            InMemoryVocabularyLookup.newBuilder()
+                .from("http://api.gbif.org/v1/", "Pathway")
+                .build())
+        .vocabularyLookup(
+            DwcTerm.typeStatus.qualifiedName(),
+            InMemoryVocabularyLookup.newBuilder()
+                .from("http://api.gbif.org/v1/", "TypeStatus")
+                .build())
+        .vocabularyLookup(
+            DwcTerm.sex.qualifiedName(),
+            InMemoryVocabularyLookup.newBuilder().from("http://api.gbif.org/v1/", "Sex").build())
+        .build();
   }
 }
