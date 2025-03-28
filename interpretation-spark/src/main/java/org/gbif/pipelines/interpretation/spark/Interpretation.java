@@ -28,8 +28,6 @@ import org.apache.spark.api.java.function.MapPartitionsFunction;
 import org.apache.spark.sql.*;
 
 public class Interpretation implements Serializable {
-  private static final Config CONF = new Config(); // TODO: a proper conf design
-
   public static void main(String[] args) {
     String input = "/Users/tsj442/dev/data/svampeatlas.verbatim.avro";
     String output = "/tmp/svampeatlas-interpreted";
