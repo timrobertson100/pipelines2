@@ -1,31 +1,28 @@
-## POC Spark connect Pipelines
+## POC GBIF Spark connect Pipelines
 
-A POC illustrating a lightweight codebase that uses Spark Connect for pipeline interpretation.
-
-This reads a verbatim avro file, and looks up the vocabularies and names.
+This reads a verbatim avro file, and produces the Parquet and JSON output suitable for 
+the SQL and ElasticSearch engines.
 
 This is designed to:
 
 1. Be a lightweight codebase with minimal dependencies
-2. Build to a small footprint (1MB) and quickly (5 secs)
+2. Build to a small footprint and build quickly 
 3. Minimise infrastructure dependencies 
-4. Avoid caching by using efficient processing (e.g. distinct values) 
-5. 
+4. Avoid complex caching by using efficient processing (e.g. distinct values) 
 
-Spark running on a laptop processes the 1M Svampeatlas dataset in around 30 secs.
+Spark running on a laptop processes the 1M Svampeatlas dataset in around 10 secs.
 
 ### Install spark locally
 
 Download and start a Spark cluster and set a few things (this may vary with environments):
 
 ```
-wget https://dlcdn.apache.org/spark/spark-3.5.4/spark-3.5.4-bin-hadoop3.tgz        
-tar -xvf spark-3.5.4-bin-hadoop3.tgz
-cd spark-3.5.4-bin-hadoop3
-export JAVA_HOME="/usr/libexec/java_home -v 17"
+wget https://dlcdn.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz        
+tar -xvf spark-3.5.5-bin-hadoop3.tgz
+cd spark-3.5.5-bin-hadoop3
 export SPARK_LOCAL_IP="127.0.0.1"
 export SPARK_DAEMON_MEMORY="4G"
-./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.4,org.apache.spark:spark-avro_2.12:3.5.4
+./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.5,org.apache.spark:spark-avro_2.12:3.5.5
 ```
 
 ### Build the code 
@@ -42,8 +39,7 @@ Afterwards can run the `Interpretation` class in the IDEA using:
 
 Look in `/tmp` for the results.
 
-
-
+TODO... explain how to run it on K8s
 ```
 cat $FILE | kubectl exec -i -n uat spark-shell-gateway-fd744fcd4-z9qm4 "--" sh -c "cat > /tmp/${FILE}"
 ```

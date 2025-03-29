@@ -28,8 +28,6 @@
         <retrofit.version>2.11.0</retrofit.version>
         <gson.version>2.11.0</gson.version>
         <java.version>11</java.version>
-        <!-- Local import order and header for offline build -->
-        <spotless.files.path>.</spotless.files.path>
     </properties>
 
     <repositories>

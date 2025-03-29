@@ -1,5 +1,5 @@
 .DS_Store
 .idea
 dependency-reduced-pom.xml
-spark-3.5.4-bin-hadoop3
+spark-3.*.*-bin-hadoop3
 target
