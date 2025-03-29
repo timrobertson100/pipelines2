@@ -35,7 +35,7 @@ public class Interpretation implements Serializable {
     SparkSession spark = SparkSession.builder().remote("sc://localhost").getOrCreate();
 
     spark.addArtifact(
-        "./interpretation-spark/target/interpretation-spark-2.0.0-SNAPSHOT-3.5.4.jar");
+        "./interpretation-spark/target/interpretation-spark-2.0.0-SNAPSHOT-3.5.5.jar");
 
     Dataset<ExtendedRecord> records =
         spark.read().format("avro").load(input).as(Encoders.bean(ExtendedRecord.class));
