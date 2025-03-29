@@ -29,7 +29,7 @@ import org.apache.spark.sql.*;
 
 public class Interpretation implements Serializable {
   public static void main(String[] args) {
-    String input = "/Users/tsj442/dev/data/svampeatlas.verbatim.avro";
+    String input = "/Users/tim/dev/data/svampeatlas.verbatim.avro";
     String output = "/tmp/svampeatlas-interpreted";
 
     SparkSession spark = SparkSession.builder().remote("sc://localhost").getOrCreate();

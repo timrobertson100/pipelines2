@@ -31,8 +31,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.Nullable;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -263,7 +261,7 @@ public class GeologicalContextInterpreter {
     return termRange;
   }
 
-  @Nullable
+  // @Nullable
   private static Float getAge(VocabularyConcept earliestVocabularyConcept, String startAgeTag) {
     return earliestVocabularyConcept.getTags().stream()
         .filter(t -> t.getName().equals(startAgeTag))

@@ -25,6 +25,8 @@ export SPARK_DAEMON_MEMORY="4G"
 ./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.5,org.apache.spark:spark-avro_2.12:3.5.5
 ```
 
+Make sure you are on Java 17.
+
 ### Build the code 
 
 ```
@@ -33,9 +35,8 @@ mvn package
 
 Afterwards can run the `Interpretation` class in the IDEA using:
 
-1. Enable and add an environment variable with `--add-opens=java.base/java.nio=ALL-UNNAMED` 
-2. Adding provided dependencies to the Classpath
-3. Changing the absolute location of the Jar file in the code
+1. Adding provided dependencies to the Classpath
+2. Changing the absolute location of the Jar file in the code
 
 Look in `/tmp` for the results.
 
