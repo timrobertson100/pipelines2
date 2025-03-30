@@ -28,7 +28,7 @@ public class Interpretation implements Serializable {
     Config config = Config.fromFirstArg(args);
 
     SparkSession.Builder sb = SparkSession.builder();
-    if (config.getSparkRemote() != null) sb.remote("sc://localhost").getOrCreate();
+    if (config.getSparkRemote() != null) sb.remote("sc://localhost");
     SparkSession spark = sb.getOrCreate();
     if (config.getJarPath() != null) spark.addArtifact(config.getJarPath());
 
