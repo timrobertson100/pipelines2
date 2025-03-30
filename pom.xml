@@ -26,6 +26,7 @@
         <gbif-api.version>2.0.6</gbif-api.version>
         <gbif-common.version>0.60</gbif-common.version>
         <vocabulary-lookup.version>2.0.4</vocabulary-lookup.version>
+        <jackson.version>2.15.2</jackson.version>
 
         <java.version>11</java.version>
     </properties>
@@ -97,6 +98,11 @@
                 <version>${vocabulary-lookup.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.spark</groupId>
                 <artifactId>spark-core_${scala.binary.version}</artifactId>
                 <version>${spark.version}</version>
@@ -130,7 +136,7 @@
     </dependencyManagement>
 
     <modules>
-      <module>interpretation-lib</module>
+      <module>interpretation-core</module>
       <module>interpretation-spark</module>
     </modules>
 

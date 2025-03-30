@@ -17,8 +17,9 @@ import org.gbif.pipelines.interpretation.Interpretation;
 import org.gbif.pipelines.interpretation.core.*;
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
-import org.gbif.pipelines.parsers.vocabulary.VocabularyService;
+import org.gbif.pipelines.utils.VocabularyServiceFactory;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -26,9 +27,9 @@ import lombok.Builder;
 
 /** */
 @Builder
-public class BasicTransform {
+public class BasicTransform implements Serializable {
   private boolean useDynamicPropertiesInterpretation;
-  private VocabularyService vocabularyService;
+  private String vocabularyApiUrl;
 
   public Optional<BasicRecord> convert(ExtendedRecord source) {
 
@@ -42,8 +43,12 @@ public class BasicTransform {
             .when(er -> !er.getCoreTerms().isEmpty())
             .via(BasicInterpreter::interpretBasisOfRecord)
             .via(BasicInterpreter::interpretTypifiedName)
-            .via(VocabularyInterpreter.interpretSex(vocabularyService))
-            .via(VocabularyInterpreter.interpretTypeStatus(vocabularyService))
+            .via(
+                VocabularyInterpreter.interpretSex(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+            .via(
+                VocabularyInterpreter.interpretTypeStatus(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
             .via(BasicInterpreter::interpretIndividualCount)
             .via((e, r) -> CoreInterpreter.interpretReferences(e, r, r::setReferences))
             .via(BasicInterpreter::interpretOrganismQuantity)
@@ -54,11 +59,21 @@ public class BasicTransform {
             .via((e, r) -> CoreInterpreter.interpretLicense(e, r::setLicense))
             .via(BasicInterpreter::interpretIdentifiedByIds)
             .via(BasicInterpreter::interpretRecordedByIds)
-            .via(VocabularyInterpreter.interpretOccurrenceStatus(vocabularyService))
-            .via(VocabularyInterpreter.interpretEstablishmentMeans(vocabularyService))
-            .via(VocabularyInterpreter.interpretLifeStage(vocabularyService))
-            .via(VocabularyInterpreter.interpretPathway(vocabularyService))
-            .via(VocabularyInterpreter.interpretDegreeOfEstablishment(vocabularyService))
+            .via(
+                VocabularyInterpreter.interpretOccurrenceStatus(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+            .via(
+                VocabularyInterpreter.interpretEstablishmentMeans(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+            .via(
+                VocabularyInterpreter.interpretLifeStage(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+            .via(
+                VocabularyInterpreter.interpretPathway(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+            .via(
+                VocabularyInterpreter.interpretDegreeOfEstablishment(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
             .via((e, r) -> CoreInterpreter.interpretDatasetID(e, r::setDatasetID))
             .via((e, r) -> CoreInterpreter.interpretDatasetName(e, r::setDatasetName))
             .via(BasicInterpreter::interpretOtherCatalogNumbers)
@@ -70,7 +85,9 @@ public class BasicTransform {
             .via(BasicInterpreter::interpretIsSequenced)
             .via(BasicInterpreter::interpretAssociatedSequences)
             // Geological context
-            .via(GeologicalContextInterpreter.interpretChronostratigraphy(vocabularyService))
+            .via(
+                GeologicalContextInterpreter.interpretChronostratigraphy(
+                    VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
             .via(GeologicalContextInterpreter::interpretLowestBiostratigraphicZone)
             .via(GeologicalContextInterpreter::interpretHighestBiostratigraphicZone)
             .via(GeologicalContextInterpreter::interpretGroup)
@@ -80,8 +97,12 @@ public class BasicTransform {
 
     if (useDynamicPropertiesInterpretation) {
       handler
-          .via(DynamicPropertiesInterpreter.interpretSex(vocabularyService))
-          .via(DynamicPropertiesInterpreter.interpretLifeStage(vocabularyService));
+          .via(
+              DynamicPropertiesInterpreter.interpretSex(
+                  VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+          .via(
+              DynamicPropertiesInterpreter.interpretLifeStage(
+                  VocabularyServiceFactory.getInstance(vocabularyApiUrl)));
     }
 
     return handler.getOfNullable();

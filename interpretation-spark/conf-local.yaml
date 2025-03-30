@@ -1,0 +1,14 @@
+# The source verbatim file (may use hdfs://... if the environment supports it)
+input: "/Users/tim/dev/data/svampeatlas.verbatim.avro"
+
+# The target directory file (may use hdfs://... if the environment supports it)
+output: "/tmp/svampeatlas-interpreted"
+
+# The Spark Connect URL which may be omitted for use with spark-submit
+sparkRemote: "sc://localhost"
+
+# The location of the Jar file, required when using Spark Connect
+jarPath: "./interpretation-spark/target/interpretation-spark-2.0.0-SNAPSHOT-3.5.5.jar"
+
+# The Vocabulary server from which to pull full vocabularies on executor startup
+vocabularyApiUrl: "https://api.gbif.org/v1/"

@@ -13,87 +13,46 @@
  */
 package org.gbif.pipelines.interpretation.spark;
 
-import org.gbif.dwc.terms.DwcTerm;
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
-import org.gbif.pipelines.parsers.vocabulary.VocabularyService;
 import org.gbif.pipelines.transform.BasicTransform;
-import org.gbif.vocabulary.lookup.InMemoryVocabularyLookup;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
 
-import org.apache.spark.api.java.function.MapPartitionsFunction;
+import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.*;
 
 public class Interpretation implements Serializable {
-  public static void main(String[] args) {
-    String input = "/Users/tim/dev/data/svampeatlas.verbatim.avro";
-    String output = "/tmp/svampeatlas-interpreted";
+  public static void main(String[] args) throws IOException {
+    Config config = Config.fromFirstArg(args);
 
-    SparkSession spark = SparkSession.builder().remote("sc://localhost").getOrCreate();
+    SparkSession.Builder sb = SparkSession.builder();
+    if (config.getSparkRemote() != null) sb.remote("sc://localhost").getOrCreate();
+    SparkSession spark = sb.getOrCreate();
+    if (config.getJarPath() != null) spark.addArtifact(config.getJarPath());
 
-    spark.addArtifact(
-        "./interpretation-spark/target/interpretation-spark-2.0.0-SNAPSHOT-3.5.5.jar");
-
+    // Read the verbatim input
     Dataset<ExtendedRecord> records =
-        spark.read().format("avro").load(input).as(Encoders.bean(ExtendedRecord.class));
+        spark.read().format("avro").load(config.getInput()).as(Encoders.bean(ExtendedRecord.class));
 
+    // Run the interpretations
     Dataset<BasicRecord> basic =
-        records.mapPartitions(
-            (MapPartitionsFunction<ExtendedRecord, BasicRecord>)
-                er -> {
-                  BasicTransform bt =
-                      BasicTransform.builder()
-                          .useDynamicPropertiesInterpretation(true)
-                          .vocabularyService(newVocabularyService())
-                          .build();
+        records.map(newBasicTransform(config), Encoders.bean(BasicRecord.class));
 
-                  List<BasicRecord> out = new LinkedList<>();
-                  er.forEachRemaining(r -> out.add(bt.convert(r).get()));
-                  return out.iterator();
-                },
-            Encoders.bean(BasicRecord.class));
-
-    basic.write().mode("overwrite").parquet(output);
+    // Write the output
+    basic.write().mode("overwrite").parquet(config.getOutput());
 
     spark.close();
   }
 
-  private static VocabularyService newVocabularyService() {
-    // TODO: prefixes from
-    // https://github.com/gbif/tech-docs/blob/main/en/data-processing/modules/ROOT/pages/vocabularies-interpretation.adoc
-    // TODO: Some likely missing!
-    return VocabularyService.builder()
-        .vocabularyLookup(
-            DwcTerm.lifeStage.qualifiedName(),
-            InMemoryVocabularyLookup.newBuilder()
-                .from("http://api.gbif.org/v1/", "LifeStage")
-                .build())
-        .vocabularyLookup(
-            DwcTerm.degreeOfEstablishment.qualifiedName(),
-            InMemoryVocabularyLookup.newBuilder()
-                .from("http://api.gbif.org/v1/", "DegreeOfEstablishment")
-                .build())
-        .vocabularyLookup(
-            DwcTerm.establishmentMeans.qualifiedName(),
-            InMemoryVocabularyLookup.newBuilder()
-                .from("http://api.gbif.org/v1/", "EstablishmentMeans")
-                .build())
-        .vocabularyLookup(
-            DwcTerm.pathway.qualifiedName(),
-            InMemoryVocabularyLookup.newBuilder()
-                .from("http://api.gbif.org/v1/", "Pathway")
-                .build())
-        .vocabularyLookup(
-            DwcTerm.typeStatus.qualifiedName(),
-            InMemoryVocabularyLookup.newBuilder()
-                .from("http://api.gbif.org/v1/", "TypeStatus")
-                .build())
-        .vocabularyLookup(
-            DwcTerm.sex.qualifiedName(),
-            InMemoryVocabularyLookup.newBuilder().from("http://api.gbif.org/v1/", "Sex").build())
-        .build();
+  private static MapFunction<ExtendedRecord, BasicRecord> newBasicTransform(Config config) {
+    return er ->
+        BasicTransform.builder()
+            .useDynamicPropertiesInterpretation(true)
+            .vocabularyApiUrl(config.getVocabularyApiUrl())
+            .build()
+            .convert(er)
+            .get();
   }
 }
