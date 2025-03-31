@@ -15,6 +15,7 @@ package org.gbif.pipelines.interpretation.spark;
 
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
+import org.gbif.pipelines.models.taxonomy.TaxonRecord;
 import org.gbif.pipelines.transform.BasicTransform;
 
 import java.io.IOException;
@@ -22,6 +23,8 @@ import java.io.Serializable;
 
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.*;
+
+import static org.gbif.pipelines.interpretation.spark.TaxonomyInterpretation.taxonomyTransform;
 
 public class Interpretation implements Serializable {
   public static void main(String[] args) throws IOException {
@@ -37,22 +40,29 @@ public class Interpretation implements Serializable {
         spark.read().format("avro").load(config.getInput()).as(Encoders.bean(ExtendedRecord.class));
 
     // Run the interpretations
-    Dataset<BasicRecord> basic =
-        records.map(newBasicTransform(config), Encoders.bean(BasicRecord.class));
+    Dataset<BasicRecord> basic = basicTransform(config, records);
+    Dataset<TaxonRecord> taxon = taxonomyTransform(config, spark, records);
 
-    // Write the output
-    basic.write().mode("overwrite").parquet(config.getOutput());
+    // Write the intermediate output (useful for debugging)
+    basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
+    taxon.write().mode("overwrite").parquet(config.getOutput() + "/taxon");
+
+    // TODO: read and join all the intermediate outputs to the HDFS and JSON views
 
     spark.close();
   }
 
-  private static MapFunction<ExtendedRecord, BasicRecord> newBasicTransform(Config config) {
-    return er ->
-        BasicTransform.builder()
-            .useDynamicPropertiesInterpretation(true)
-            .vocabularyApiUrl(config.getVocabularyApiUrl())
-            .build()
-            .convert(er)
-            .get();
+  private static Dataset<BasicRecord> basicTransform(
+      Config config, Dataset<ExtendedRecord> source) {
+    return source.map(
+        (MapFunction<ExtendedRecord, BasicRecord>)
+            er ->
+                BasicTransform.builder()
+                    .useDynamicPropertiesInterpretation(true)
+                    .vocabularyApiUrl(config.getVocabularyApiUrl())
+                    .build()
+                    .convert(er)
+                    .get(),
+        Encoders.bean(BasicRecord.class));
   }
 }

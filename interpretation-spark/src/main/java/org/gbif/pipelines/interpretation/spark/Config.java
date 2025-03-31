@@ -29,6 +29,8 @@ public class Config implements Serializable {
   @JsonProperty private String sparkRemote;
   @JsonProperty private String jarPath;
   @JsonProperty private String vocabularyApiUrl;
+  @JsonProperty private String speciesMatchAPI = "https://api.gbif.org/v1/";
+  @JsonProperty private Integer speciesMatchParallelism = 10;
 
   static Config fromFirstArg(String[] args) throws IOException {
     return new YAMLMapper().readValue(new File(args[0]), Config.class);
