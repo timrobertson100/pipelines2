@@ -28,6 +28,10 @@
           <classifier>shaded</classifier>
       </dependency>
       <dependency>
+          <groupId>org.gbif.kvs</groupId>
+          <artifactId>kvs-gbif</artifactId>
+      </dependency>
+      <dependency>
           <groupId>com.fasterxml.jackson.dataformat</groupId>
           <artifactId>jackson-dataformat-yaml</artifactId>
       </dependency>

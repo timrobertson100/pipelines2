@@ -38,5 +38,9 @@
       <artifactId>vocabulary-lookup</artifactId>
       <classifier>shaded</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.gbif.kvs</groupId>
+      <artifactId>kvs-gbif</artifactId>
+    </dependency>
   </dependencies>
 </project>
