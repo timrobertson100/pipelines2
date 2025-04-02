@@ -67,3 +67,65 @@ cat $FILE | kubectl exec -i -n uat spark-shell-gateway-fd744fcd4-z9qm4 "--" sh -
     /tmp/interpretation-spark-2.0.0-SNAPSHOT-3.5.5.jar \
     /tmp/conf-uat.yaml
 ```
+
+Or
+
+```
+kubectl config use-context production     
+FILE=conf-prod.yaml 
+cat $FILE | kubectl exec -i -n production spark-shell-gateway-569d7c5894-wfrbt "--" sh -c "cat > /tmp/${FILE}" 
+
+./bin/spark-submit --master k8s://https://prodgateway-vh.gbif.org --deploy-mode client --executor-memory 16G \
+    --driver-memory 4G --num-executors 40 --executor-cores 5 \
+    --packages org.apache.spark:spark-avro_2.12:3.5.1 \
+    --conf spark.kubernetes.authenticate.serviceAccountName="spark-shell-gateway" \
+    --conf spark.kubernetes.namespace="production" \
+    --conf spark.kubernetes.container.image="stackable-docker.gbif.org/stackable/spark-k8s:3.5.1-stackable24.3.0"\
+    --conf spark.driver.host=spark-shell-gateway \
+    --conf spark.driver.bindAddress=0.0.0.0 \
+    --conf spark.kubernetes.driver.label.queue=root.uat2.default \
+    --conf spark.kubernetes.executor.label.queue=root.uat2.default \
+    --conf spark.kubernetes.submit.label.queue=root.uat2.default \
+    --conf spark.kubernetes.scheduler.name=yunikorn \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.mount.path=/data/spark/ \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.mount.readOnly=false \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.sizeLimit=5Gi \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.storageClass=local-path-delete \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.claimName=OnDemand \
+    --conf spark.driver.port=7078 \
+    --conf spark.blockManager.port=7089 \
+    --class org.gbif.pipelines.interpretation.spark.Interpretation  \
+    /tmp/interpretation-spark-2.0.0-SNAPSHOT-3.5.5.jar \
+    /tmp/conf-prod.yaml
+
+./bin/spark-submit 
+    --master k8s://https://prodgateway-vh.gbif.org \
+    --deploy-mode client \
+    --executor-memory 16G \
+    --driver-memory 4G \
+    --num-executors 80 \
+    --executor-cores 5 \
+    --packages org.apache.spark:spark-avro_2.12:3.5.1 \
+    --conf spark.executor.memoryOverhead=4G \
+	--conf spark.sql.shuffle.partitions=1200 \	
+    --conf spark.kubernetes.authenticate.serviceAccountName="spark-shell-gateway" \
+    --conf spark.kubernetes.namespace="production" \
+    --conf spark.kubernetes.container.image="stackable-docker.gbif.org/stackable/spark-k8s:3.5.1-stackable24.3.0"\
+    --conf spark.driver.host=spark-shell-gateway \
+    --conf spark.driver.bindAddress=0.0.0.0 \
+    --conf spark.kubernetes.driver.label.queue=root.uat2.default \
+    --conf spark.kubernetes.executor.label.queue=root.uat2.default \
+    --conf spark.kubernetes.submit.label.queue=root.uat2.default \
+    --conf spark.kubernetes.scheduler.name=yunikorn \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.mount.path=/data/spark/ \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.mount.readOnly=false \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.sizeLimit=5Gi \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.storageClass=local-path-delete \
+    --conf spark.kubernetes.executor.volumes.persistentVolumeClaim.spark-local-dir-1.options.claimName=OnDemand \
+    --conf spark.driver.port=7078 \
+    --conf spark.blockManager.port=7089 \
+    --class org.gbif.pipelines.interpretation.spark.Interpretation  \
+    /tmp/interpretation-spark-2.0.0-SNAPSHOT-3.5.5.jar \
+    /tmp/conf-prod.yaml
+
+```

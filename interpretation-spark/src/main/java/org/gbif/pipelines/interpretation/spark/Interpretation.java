@@ -31,7 +31,7 @@ public class Interpretation implements Serializable {
     Config config = Config.fromFirstArg(args);
 
     SparkSession.Builder sb = SparkSession.builder();
-    if (config.getSparkRemote() != null) sb.remote("sc://localhost");
+    if (config.getSparkRemote() != null) sb.remote(config.getSparkRemote());
     SparkSession spark = sb.getOrCreate();
     if (config.getJarPath() != null) spark.addArtifact(config.getJarPath());
 
@@ -44,8 +44,10 @@ public class Interpretation implements Serializable {
     Dataset<TaxonRecord> taxon = taxonomyTransform(config, spark, records);
 
     // Write the intermediate output (useful for debugging)
-    basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
+    // Order here matters. Putting slower processes that use fewer cores than available first allows
+    // faster jobs to run in parallel. The converse is not true.
     taxon.write().mode("overwrite").parquet(config.getOutput() + "/taxon");
+    basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
 
     // TODO: read and join all the intermediate outputs to the HDFS and JSON views
 

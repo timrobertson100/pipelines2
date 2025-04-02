@@ -96,6 +96,7 @@ public class TaxonomyTransform implements Serializable {
     try {
       usageMatch = kvStore.get(identification);
     } catch (Exception ex) {
+
       log.error(ex.getMessage(), ex);
       throw new RuntimeException(ex.getMessage());
     }

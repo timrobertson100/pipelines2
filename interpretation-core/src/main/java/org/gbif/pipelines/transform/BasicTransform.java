@@ -59,9 +59,12 @@ public class BasicTransform implements Serializable {
             .via((e, r) -> CoreInterpreter.interpretLicense(e, r::setLicense))
             .via(BasicInterpreter::interpretIdentifiedByIds)
             .via(BasicInterpreter::interpretRecordedByIds)
+            /*
             .via(
                 VocabularyInterpreter.interpretOccurrenceStatus(
                     VocabularyServiceFactory.getInstance(vocabularyApiUrl)))
+
+             */
             .via(
                 VocabularyInterpreter.interpretEstablishmentMeans(
                     VocabularyServiceFactory.getInstance(vocabularyApiUrl)))

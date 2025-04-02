@@ -1,10 +1,12 @@
 # The source verbatim file (may use hdfs://... if the environment supports it)
 #input: "hdfs:///data/ingest/84d26682-f762-11e1-a439-00145eb45e9a/243/verbatim.avro"
-input: "hdfs:///data/ingest/50c9509d-22c7-4a22-a47d-8c48425ef4a7/229/verbatim.avro"
+#input: "hdfs:///data/ingest/50c9509d-22c7-4a22-a47d-8c48425ef4a7/229/verbatim.avro"
+input: "hdfs:///data/ingest/4fa7b334-ce0d-4e88-aaae-2e0c138d049e/20/verbatim.avro"
 
 # The target directory file (may use hdfs://... if the environment supports it)
 #output: "hdfs:///tmp/svampeatlas-interpreted"
-output: "hdfs:///tmp/inaturalist-interpreted"
+#output: "hdfs:///tmp/inaturalist-interpreted"
+output: "hdfs:///tmp/ebird-interpreted"
 
 # The Vocabulary server from which to pull full vocabularies on executor startup
 vocabularyApiUrl: "https://api.gbif.org/v1/"
