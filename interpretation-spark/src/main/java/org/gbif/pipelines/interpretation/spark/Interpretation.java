@@ -17,7 +17,6 @@ import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
 import org.gbif.pipelines.models.LocationRecord;
 import org.gbif.pipelines.models.taxonomy.TaxonRecord;
-import org.gbif.pipelines.parsers.location.SpatialReferenceSystemParser;
 import org.gbif.pipelines.transform.BasicTransform;
 
 import java.io.IOException;
@@ -50,7 +49,7 @@ public class Interpretation implements Serializable {
     // Write the intermediate output (useful for debugging)
     basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
     taxon.write().mode("overwrite").parquet(config.getOutput() + "/taxon");
-    location.write().mode("overwrite").parquet(config.getOutput() + "/location");
+    // location.write().mode("overwrite").parquet(config.getOutput() + "/location");
 
     // TODO: read and join all the intermediate outputs to the HDFS and JSON views
 

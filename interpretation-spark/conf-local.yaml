@@ -1,5 +1,5 @@
 # The source verbatim file (may use hdfs://... if the environment supports it)
-input: "/Users/tsj442/dev/data/svampeatlas.verbatim.avro"
+input: "/Users/tim/dev/data/svampeatlas.verbatim.avro"
 #input: "/Users/tsj442/dev/data/inaturalist.verbatim.avro"
 
 # The target directory file (may use hdfs://... if the environment supports it)

@@ -13,11 +13,15 @@
           <groupId>org.projectlombok</groupId>
           <artifactId>lombok</artifactId>
       </dependency>
-        <dependency>
-            <groupId>org.gbif.pipelines</groupId>
-            <artifactId>interpretation-core</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
+      <dependency>
+          <groupId>org.gbif.pipelines</groupId>
+          <artifactId>interpretation-core</artifactId>
+          <version>2.0.0-SNAPSHOT</version>
+      </dependency>
+      <!--dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+      </dependency-->
       <dependency>
           <groupId>org.gbif</groupId>
           <artifactId>dwc-api</artifactId>
@@ -55,8 +59,6 @@
           <groupId>org.apache.spark</groupId>
           <artifactId>spark-common-utils_${scala.binary.version}</artifactId>
       </dependency>
-
-
       <dependency>
           <groupId>org.geotools</groupId>
           <artifactId>gt-referencing</artifactId>
@@ -93,8 +95,6 @@
           <groupId>org.geotools</groupId>
           <artifactId>gt-epsg-extension</artifactId>
       </dependency>
-
-
     </dependencies>
     <build>
         <plugins>
@@ -112,8 +112,8 @@
                             <finalName>${project.artifactId}-${project.version}-${spark.version}</finalName>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
+                                <!-- TODO: review these. One is needed for geotools to work -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <!-- append default configs -->
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>reference.conf</resource>
                                 </transformer>

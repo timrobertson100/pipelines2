@@ -64,7 +64,7 @@ public class TaxonomyInterpretation {
                 },
             Encoders.bean(RecordWithIdentification.class));
     recordWithIdentification
-        .repartition(10000, recordWithIdentification.col("identificationHash"))
+        .repartition(recordWithIdentification.col("identificationHash"))
         .createOrReplaceTempView("record_with_identification");
 
     // distinct the identifications to lookup
@@ -88,7 +88,7 @@ public class TaxonomyInterpretation {
                   else return null;
                 },
             Encoders.bean(KeyedTaxonRecord.class));
-    keyedTaxa.repartition(1000, keyedTaxa.col("key")).createOrReplaceTempView("key_taxa");
+    keyedTaxa.repartition(keyedTaxa.col("key")).createOrReplaceTempView("key_taxa");
 
     // join the dictionary back to the source records
     Dataset<RecordWithTaxonRecord> expanded =
@@ -98,6 +98,7 @@ public class TaxonomyInterpretation {
                     + "FROM record_with_identification r "
                     + "  LEFT JOIN key_taxa tr ON r.identificationHash = tr.key")
             .as(Encoders.bean(RecordWithTaxonRecord.class));
+
 
     return expanded.map(
         (MapFunction<RecordWithTaxonRecord, TaxonRecord>)
