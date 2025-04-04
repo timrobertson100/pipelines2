@@ -99,7 +99,6 @@ public class TaxonomyInterpretation {
                     + "  LEFT JOIN key_taxa tr ON r.identificationHash = tr.key")
             .as(Encoders.bean(RecordWithTaxonRecord.class));
 
-
     return expanded.map(
         (MapFunction<RecordWithTaxonRecord, TaxonRecord>)
             r -> {

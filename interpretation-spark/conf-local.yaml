@@ -1,10 +1,18 @@
 # The source verbatim file (may use hdfs://... if the environment supports it)
-input: "/Users/tim/dev/data/svampeatlas.verbatim.avro"
+#input: "/Users/tim/dev/data/svampeatlas.verbatim.avro"
 #input: "/Users/tsj442/dev/data/inaturalist.verbatim.avro"
+#input: "../interpretation-spark/pontaurus.verbatim.avro"
+#input: "../interpretation-spark/fmnh-lc.verbatim.avro"
+#input: "../interpretation-spark/bell.verbatim.avro"
+input: "../interpretation-spark/berry.verbatim.avro"
 
 # The target directory file (may use hdfs://... if the environment supports it)
-output: "/tmp/svampeatlas-interpreted"
+#output: "/tmp/svampeatlas-interpreted"
 #output: "/tmp/inaturalist-interpreted"
+#output: "/tmp/pontaurus-interpreted"
+#output: "/tmp/fmnh-lc-interpreted"
+#output: "/tmp/bell-interpreted"
+output: "/tmp/berry-interpreted"
 
 # The Spark Connect URL which may be omitted for use with spark-submit
 sparkRemote: "sc://localhost"

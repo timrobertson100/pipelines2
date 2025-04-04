@@ -84,6 +84,8 @@ public class LocationInterpretation {
                           .setId("UNUSED_BUT_NECESSARY")
                           .setCoreTerms(location.toCoreTermsMap())
                           .build();
+
+                  // look them up
                   Optional<LocationRecord> converted =
                       locationTransform.convert(
                           er, MetadataRecord.newBuilder().build()); // TODO MetadataRecord
@@ -92,7 +94,10 @@ public class LocationInterpretation {
                         .key(location.hash())
                         .locationRecord(converted.get())
                         .build();
-                  else return null;
+                  else
+                    return KeyedLocationRecord.builder()
+                        .key(location.hash())
+                        .build(); // TODO: null handling?
                 },
             Encoders.bean(KeyedLocationRecord.class));
     keyedLocation.createOrReplaceTempView("key_location");
@@ -109,13 +114,15 @@ public class LocationInterpretation {
     return expanded.map(
         (MapFunction<RecordWithLocationRecord, LocationRecord>)
             r -> {
-              LocationRecord locationRecord = r.getLocationRecord();
-              if (locationRecord != null) {
-                locationRecord.setId(r.getId());
-                locationRecord.setCoreId(r.getCoreId());
-                locationRecord.setParentId(r.getParentId());
-                return locationRecord;
-              } else return null;
+              LocationRecord locationRecord =
+                  r.getLocationRecord() == null
+                      ? LocationRecord.newBuilder().build()
+                      : r.getLocationRecord();
+
+              locationRecord.setId(r.getId());
+              locationRecord.setCoreId(r.getCoreId());
+              locationRecord.setParentId(r.getParentId());
+              return locationRecord;
             },
         Encoders.bean(LocationRecord.class));
   }

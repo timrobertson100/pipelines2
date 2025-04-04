@@ -3,3 +3,5 @@
 dependency-reduced-pom.xml
 spark-3.*.*-bin-hadoop3
 target
+interpretation-spark/bell.verbatim.avro
+interpretation-spark/fmnh-lc.verbatim.avro

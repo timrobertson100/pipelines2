@@ -128,7 +128,7 @@
                                 </filter>
                             </filters>
                             <relocations>
-                                <!-- Retrofit version clashes with Spark -->
+                                <!-- Retrofit version clashes with Spark. TODO: check this! -->
                                 <relocation>
                                     <pattern>com.google.gson</pattern>
                                     <shadedPattern>org.shaded.com.google.gson</shadedPattern>

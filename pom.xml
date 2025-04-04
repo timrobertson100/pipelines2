@@ -17,7 +17,7 @@
         <scala.binary.version>2.12</scala.binary.version>
         <lombok.version>1.18.36</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
-        <guava.version>33.4.6-jre</guava.version>
+        <guava.version>33.4.0-jre</guava.version>
         <dwca-io.version>3.0.0</dwca-io.version>
         <dwc-api.version>2.0.1-SNAPSHOT</dwc-api.version>
         <gbif-parsers.version>0.67</gbif-parsers.version>

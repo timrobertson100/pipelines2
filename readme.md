@@ -22,7 +22,7 @@ tar -xvf spark-3.5.5-bin-hadoop3.tgz
 cd spark-3.5.5-bin-hadoop3
 export SPARK_LOCAL_IP="127.0.0.1"
 export SPARK_DAEMON_MEMORY="4G"
-./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_2.12:3.5.5,org.apache.spark:spark-avro_2.12:3.5.5
+./sbin/start-connect-server.sh --conf spark.executor.userClassPathFirst=true --packages org.apache.spark:spark-connect_2.12:3.5.5,org.apache.spark:spark-avro_2.12:3.5.5
 ```
 
 Make sure you are on Java 17.
