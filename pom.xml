@@ -28,6 +28,7 @@
         <gbif-common.version>0.60</gbif-common.version>
         <vocabulary-lookup.version>2.0.4</vocabulary-lookup.version>
         <jackson.version>2.15.2</jackson.version>
+        <geotools.version>20.5</geotools.version>
 
         <java.version>11</java.version>
     </properties>
@@ -122,6 +123,51 @@
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-yaml</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-referencing</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-metadata</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-opengis</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-main</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-api</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-transform</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-geometry</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-hsql</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-extension</artifactId>
+                <version>${geotools.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.spark</groupId>

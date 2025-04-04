@@ -13,8 +13,6 @@
  */
 package org.gbif.pipelines.models;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,19 +22,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderClassName = "Builder", builderMethodName = "newBuilder", setterPrefix = "set")
-public class EventCoreRecord implements Issues {
-  private String id;
-  private String parentEventID;
-  private VocabularyConcept eventType;
-  private Long created;
-  private Double sampleSizeValue;
-  private String sampleSizeUnit;
-  private String references;
-  private String license;
-  private List<String> datasetID;
-  private List<String> datasetName;
-  private List<String> samplingProtocol;
-  private List<Parent> parentsLineage;
-  private String locationID;
-  @lombok.Builder.Default private IssueRecord issues = IssueRecord.newBuilder().build();
+public class GadmFeatures {
+  private String level0Gid;
+  private String level1Gid;
+  private String level2Gid;
+  private String level3Gid;
+  private String level0Name;
+  private String level1Name;
+  private String level2Name;
+  private String level3Name;
 }

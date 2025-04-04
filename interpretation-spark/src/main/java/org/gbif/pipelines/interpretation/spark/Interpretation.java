@@ -15,7 +15,9 @@ package org.gbif.pipelines.interpretation.spark;
 
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
+import org.gbif.pipelines.models.LocationRecord;
 import org.gbif.pipelines.models.taxonomy.TaxonRecord;
+import org.gbif.pipelines.parsers.location.SpatialReferenceSystemParser;
 import org.gbif.pipelines.transform.BasicTransform;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.io.Serializable;
 import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.*;
 
+import static org.gbif.pipelines.interpretation.spark.LocationInterpretation.locationTransform;
 import static org.gbif.pipelines.interpretation.spark.TaxonomyInterpretation.taxonomyTransform;
 
 public class Interpretation implements Serializable {
@@ -42,12 +45,12 @@ public class Interpretation implements Serializable {
     // Run the interpretations
     Dataset<BasicRecord> basic = basicTransform(config, records);
     Dataset<TaxonRecord> taxon = taxonomyTransform(config, spark, records);
+    Dataset<LocationRecord> location = locationTransform(config, spark, records);
 
     // Write the intermediate output (useful for debugging)
-    // Order here matters. Putting slower processes that use fewer cores than available first allows
-    // faster jobs to run in parallel. The converse is not true.
-    taxon.write().mode("overwrite").parquet(config.getOutput() + "/taxon");
     basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
+    taxon.write().mode("overwrite").parquet(config.getOutput() + "/taxon");
+    location.write().mode("overwrite").parquet(config.getOutput() + "/location");
 
     // TODO: read and join all the intermediate outputs to the HDFS and JSON views
 

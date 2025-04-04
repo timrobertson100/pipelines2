@@ -24,19 +24,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(builderClassName = "Builder", builderMethodName = "newBuilder", setterPrefix = "set")
-public class EventCoreRecord implements Issues {
+public class MetadataRecord implements Issues {
   private String id;
-  private String parentEventID;
-  private VocabularyConcept eventType;
   private Long created;
-  private Double sampleSizeValue;
-  private String sampleSizeUnit;
-  private String references;
+  private Long lastCrawled;
+  private String datasetKey;
+  private Integer crawlId;
+  private String datasetTitle;
+  private String installationKey;
+  private String publisherTitle;
+  private String publishingOrganizationKey;
+  private String endorsingNodeKey;
+  private String projectId;
+  private String programmeAcronym;
+  private String protocol;
   private String license;
-  private List<String> datasetID;
-  private List<String> datasetName;
-  private List<String> samplingProtocol;
-  private List<Parent> parentsLineage;
-  private String locationID;
+  private String datasetPublishingCountry;
+  private String hostingOrganizationKey;
+  private List<String> networkKeys;
+  private List<MachineTag> machineTags;
   @lombok.Builder.Default private IssueRecord issues = IssueRecord.newBuilder().build();
 }
