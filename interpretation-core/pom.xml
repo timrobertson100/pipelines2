@@ -17,10 +17,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <!--dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency-->
     <dependency>
       <groupId>org.gbif</groupId>
       <artifactId>dwc-api</artifactId>
@@ -40,7 +36,41 @@
     </dependency>
     <dependency>
       <groupId>org.gbif.kvs</groupId>
+      <artifactId>kvs-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gbif.kvs</groupId>
+      <artifactId>kvs-rest-clients</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gbif.kvs</groupId>
       <artifactId>kvs-gbif</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gbif</groupId>
+      <artifactId>name-parser-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gbif</groupId>
+      <artifactId>name-parser</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.gbif</groupId>
+      <artifactId>name-parser-v1</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.locationtech.jts</groupId>
+      <artifactId>jts-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
@@ -73,6 +103,7 @@
     <dependency>
       <groupId>org.geotools</groupId>
       <artifactId>gt-epsg-hsql</artifactId>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>
