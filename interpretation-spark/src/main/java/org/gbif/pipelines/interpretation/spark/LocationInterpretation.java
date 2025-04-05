@@ -67,8 +67,6 @@ public class LocationInterpretation {
     Dataset<Location> distinctLocations =
         spark
             .sql("SELECT DISTINCT location.* FROM record_with_location")
-            // here just for
-            // dev
             .repartition(config.getGeocodeParallelism())
             .as(Encoders.bean(Location.class));
 
