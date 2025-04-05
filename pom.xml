@@ -16,25 +16,25 @@
         <spark.version>3.5.5</spark.version>
         <scala.binary.version>2.12</scala.binary.version>
 
-        <lombok.version>1.18.36</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
 
         <dwca-io.version>3.0.0</dwca-io.version>
-        <dwc-api.version>2.0.1-SNAPSHOT</dwc-api.version>
+        <dwc-api.version>2.0.1</dwc-api.version>
         <gbif-parsers.version>0.67</gbif-parsers.version>
-        <gbif-api.version>2.0.6</gbif-api.version>
+        <gbif-api.version>2.1.0</gbif-api.version>
         <gbif-common.version>0.60</gbif-common.version>
-        <vocabulary-lookup.version>2.0.4</vocabulary-lookup.version>
+        <vocabulary-lookup.version>2.0.5</vocabulary-lookup.version>
         <kvs-gbif.version>2.0.0</kvs-gbif.version>
-        <gbif-name-parser.version>3.8.3</gbif-name-parser.version>
+        <gbif-name-parser.version>4.0.0</gbif-name-parser.version>
 
-        <guava.version>33.4.0-jre</guava.version>
+        <guava.version>33.4.6-jre</guava.version>
         <commons-io.version>2.14.0</commons-io.version>
         <commons-lang3.version>3.17.0</commons-lang3.version>
         <fastutil.version>8.5.15</fastutil.version>
         <!-- Scala module 2.15.2 requires Jackson Databind version >= 2.15.0 and < 2.16.0 -->
         <jackson.version>2.15.4</jackson.version>
-        <jts-core.version>1.16.1</jts-core.version>
+        <jts-core.version>1.20.0</jts-core.version>
         <geotools.version>20.5</geotools.version>
 
         <java.version>11</java.version>
@@ -112,13 +112,27 @@
                 <groupId>org.gbif.kvs</groupId>
                 <artifactId>kvs-core</artifactId>
                 <version>${kvs-gbif.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.hbase</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+
             </dependency>
             <dependency>
                 <groupId>org.gbif.kvs</groupId>
                 <artifactId>kvs-gbif</artifactId>
                 <version>${kvs-gbif.version}</version>
                 <exclusions>
-                    <!-- TODO: Review this - was just a guess! -->
                     <exclusion>
                         <groupId>ch.qos.logback</groupId>
                         <artifactId>logback-classic</artifactId>
