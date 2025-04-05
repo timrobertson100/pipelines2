@@ -66,7 +66,7 @@ public class LocationInterpretation {
     // distinct the locations to lookup
     Dataset<Location> distinctLocations =
         spark
-            .sql("SELECT DISTINCT location.* FROM record_with_location LIMIT 1000") // TODO! Limited
+            .sql("SELECT DISTINCT location.* FROM record_with_location") 
             // here just for
             // dev
             .repartition(config.getGeocodeParallelism())
