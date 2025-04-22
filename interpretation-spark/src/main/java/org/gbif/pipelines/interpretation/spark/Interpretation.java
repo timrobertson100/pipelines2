@@ -47,7 +47,7 @@ public class Interpretation implements Serializable {
     Dataset<BasicRecord> basic = basicTransform(config, records);
     Dataset<TaxonRecord> taxon = taxonomyTransform(config, spark, records);
     Dataset<LocationRecord> location = locationTransform(config, spark, records);
-    Dataset<TemporalRecord> temporal = temporalTransform(config, spark, records);
+    Dataset<TemporalRecord> temporal = temporalTransform(records);
 
     // Write the intermediate output (useful for debugging)
     basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
