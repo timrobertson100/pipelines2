@@ -16,6 +16,7 @@ package org.gbif.pipelines.interpretation.spark;
 import org.gbif.pipelines.models.BasicRecord;
 import org.gbif.pipelines.models.ExtendedRecord;
 import org.gbif.pipelines.models.LocationRecord;
+import org.gbif.pipelines.models.TemporalRecord;
 import org.gbif.pipelines.models.taxonomy.TaxonRecord;
 import org.gbif.pipelines.transform.BasicTransform;
 
@@ -27,6 +28,7 @@ import org.apache.spark.sql.*;
 
 import static org.gbif.pipelines.interpretation.spark.LocationInterpretation.locationTransform;
 import static org.gbif.pipelines.interpretation.spark.TaxonomyInterpretation.taxonomyTransform;
+import static org.gbif.pipelines.interpretation.spark.TemporalInterpretation.temporalTransform;
 
 public class Interpretation implements Serializable {
   public static void main(String[] args) throws IOException {
@@ -45,11 +47,13 @@ public class Interpretation implements Serializable {
     Dataset<BasicRecord> basic = basicTransform(config, records);
     Dataset<TaxonRecord> taxon = taxonomyTransform(config, spark, records);
     Dataset<LocationRecord> location = locationTransform(config, spark, records);
+    Dataset<TemporalRecord> temporal = temporalTransform(config, spark, records);
 
     // Write the intermediate output (useful for debugging)
     basic.write().mode("overwrite").parquet(config.getOutput() + "/basic");
     taxon.write().mode("overwrite").parquet(config.getOutput() + "/taxon");
     location.write().mode("overwrite").parquet(config.getOutput() + "/location");
+    temporal.write().mode("overwrite").parquet(config.getOutput() + "/temporal");
 
     // TODO: read and join all the intermediate outputs to the HDFS and JSON views
 
