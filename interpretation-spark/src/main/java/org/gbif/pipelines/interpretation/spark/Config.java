@@ -33,7 +33,6 @@ public class Config implements Serializable {
   @JsonProperty private Integer speciesMatchParallelism = 10;
   @JsonProperty private String geocodeAPI = "https://api.gbif.org/v1/";
   @JsonProperty private Integer geocodeParallelism = 10;
-  @JsonProperty private Integer temporalParallelism = 10;
 
   static Config fromFirstArg(String[] args) throws IOException {
     return new YAMLMapper().readValue(new File(args[0]), Config.class);
