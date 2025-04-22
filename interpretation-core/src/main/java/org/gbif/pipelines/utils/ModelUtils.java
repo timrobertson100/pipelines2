@@ -114,9 +114,10 @@ public class ModelUtils {
   }
 
   public static boolean hasExtension(ExtendedRecord er, String extension) {
-    return Optional.ofNullable(er.getExtensions().get(extension))
-        .filter(l -> !l.isEmpty())
-        .isPresent();
+    return er.getExtensions() != null
+        && Optional.ofNullable(er.getExtensions().get(extension))
+            .filter(l -> !l.isEmpty())
+            .isPresent();
   }
 
   /** Checks if a {@link ExtendedRecord} is null or empty. */
